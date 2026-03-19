@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Configurator Sistem Fotovoltaic - CurentGratis.eu (TOATE PRODUSELE)</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f5f7fa; color:#333; margin:0; padding:20px; line-height:1.6; }
+    .container { max-width:1200px; margin:0 auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+    h1, h2 { color:#1a5c37; text-align:center; }
+    .step { margin:30px 0; padding:20px; background:#f9fafb; border-radius:10px; border:1px solid #e0e7e0; }
+    label { font-weight:bold; display:block; margin:12px 0 6px; }
+    select, input[type=range], input[type=text], input[type=email], input[type=tel] { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:1rem; box-sizing:border-box; }
+    .checkbox-group { margin:15px 0; }
+    .total { font-size:2.1rem; font-weight:bold; color:#d32f2f; text-align:center; margin:30px 0; background:#ffebee; padding:20px; border-radius:10px; }
+    .total small { font-size:0.9rem; color:#555; display:block; margin-top:8px; }
+    #productionChart { max-width:800px; margin:40px auto; }
+    .note { font-size:0.9rem; color:#555; text-align:center; margin:20px 0; }
+    .live { background:#e8f5e9; padding:10px; border-radius:8px; text-align:center; font-weight:bold; color:#2e7d32; margin:15px 0; }
+    button { background:#388e3c; color:white; border:none; padding:14px 40px; font-size:1.15rem; border-radius:8px; cursor:pointer; display:block; margin:25px auto; }
+    button:hover { background:#2e7d32; }
+    .hidden { display:none; }
+    form#contactForm { background:#f9fafb; padding:25px; border-radius:10px; border:1px solid #e0e7e0; margin:40px 0; }
+    .form-group { margin-bottom:18px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Configurator Sistem Fotovoltaic</h1>
+  <p style="text-align:center; color:#555;">Toate produsele din link-urile date sunt incluse (prețuri actualizate 19 martie 2026)</p>
+  <div class="live">✅ Toate invertoarele • Toate panourile • Toate bateriile (inclusiv GBP51.2-100W 5.12 kWh)</div>
+
+  <!-- Etapa 1 -->
+  <div class="step">
+    <h2>1. Tip sistem & Invertor (TOATE modelele din catalog)</h2>
+    <label>Tip fază:</label>
+    <select id="faza" onchange="updateInvertorOptions(); calculeazaTotal();">
+      <option value="mono">Monofazat</option>
+      <option value="tri">Trifazat</option>
+    </select>
+
+    <label>Tip invertor:</label>
+    <select id="tipInvertor" onchange="updateInvertorOptions(); calculeazaTotal();">
+      <option value="ongrid">On-grid</option>
+      <option value="hibrid">Hibrid</option>
+    </select>
+
+    <label>Invertor ales (toate modelele din link-urile tale):</label>
+    <select id="invertorSelect" onchange="updatePanouriLimite(); calculeazaTotal();"></select>
+  </div>
+
+  <!-- Etapa 2 -->
+  <div class="step">
+    <h2>2. Panouri fotovoltaice (cele 2 variante exacte din link-urile tale)</h2>
+    <label>Tip panou:</label>
+    <select id="tipPanou" onchange="updatePanouriLimite(); calculeazaTotal();">
+      <option value="440">Panou fotovoltaic N Type Double Glass Black - HY-M10/108G 440W (390,99 lei)</option>
+      <option value="480" selected>Panou fotovoltaic N Type HY-M10/120H 480W (424,99 lei)</option>
+    </select>
+
+    <label>Număr panouri: <span id="nrPanouriValue">0</span> bucăți (<span id="putereTotalaValue">0</span> Wp)</label>
+    <input type="range" id="nrPanouri" min="0" max="60" value="0" step="1" 
+           oninput="document.getElementById('nrPanouriValue').textContent=this.value; updatePutereTotala(); calculeazaTotal();">
+
+    <div id="limitePanouri" style="margin-top:10px; color:#555; font-weight:bold;">
+      Limite: min ... – max ... panouri (50% – 120% din puterea invertorului)
+    </div>
+  </div>
+
+  <!-- Etapa 3 -->
+  <div class="step">
+    <h2>3. Structură & accesorii</h2>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="structura" onchange="calculeazaTotal();"> Structură</label>
+      <select id="tipStructura" onchange="calculeazaTotal();" disabled>
+        <option value="tabla">Acoperiș tablă (+130 lei/panou)</option>
+        <option value="tigla">Acoperiș țiglă (+160 lei/panou)</option>
+        <option value="sol">La sol (+250 lei/panou)</option>
+      </select>
+    </div>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="cablu" onchange="calculeazaTotal();"> 
+      Cablaj & conectică (<strong>500 lei sub 10 kWp</strong> / <strong>1000 lei peste 10 kWp</strong>)</label>
+    </div>
+    <div class="checkbox-group"><label><input type="checkbox" id="tablouri" onchange="calculeazaTotal();"> Tablouri protecții AC/DC (+800 lei)</label></div>
+    <div class="checkbox-group"><label><input type="checkbox" id="impamantare" onchange="calculeazaTotal();"> Împământare completă (+1500 lei)</label></div>
+  </div>
+
+  <!-- Etapa 4 -->
+  <div class="step hidden" id="sectiuneBaterii">
+    <h2>4. Baterii de stocare (toate variantele din link-urile tale + GBP51.2-100W 5.12 kWh)</h2>
+    <label>Capacitate baterii:</label>
+    <select id="baterii" onchange="calculeazaTotal();">
+      <option value="0">Fără baterii</option>
+      <option value="4.8">4.8 kWh – GBP-R 48V 100Ah Rack (4.190 lei)</option>
+      <option value="5.12">5.12 kwh - GBP51.2-100 Wall  (4.590 lei)</option>
+      <option value="10.24">10.24 kWh – GBP51.2 (8.390 lei)</option>
+      <option value="15">15 kWh – model pe podea (9.890 lei)</option>
+      <option value="20.48">20.48 kWh (2 × 10.24 kWh)</option>
+      <option value="30">30 kWh (2 × 15 kWh)</option>
+    </select>
+  </div>
+
+  <!-- Etapa 5 -->
+  <div class="step">
+    <h2>5. Servicii</h2>
+    <div class="checkbox-group"><label><input type="checkbox" id="montaj" onchange="calculeazaTotal();"> Montaj + punere în funcțiune</label></div>
+    <div class="checkbox-group"><label><input type="checkbox" id="dosar" onchange="calculeazaTotal();"> Întocmire dosar prosumator</label></div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="total" id="totalPret">Total cu discount 3%: 0 lei</div>
+
+  <!-- Grafic -->
+  <div id="productionChart">
+    <h2>Estimare producție anuală (kWh) – medie România</h2>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- Formular final -->
+  <form id="contactForm" onsubmit="trimiteOferta(event)">
+    <h2>Cere ofertă personalizată pe email</h2>
+    <p style="text-align:center; color:#555; margin-bottom:25px;">Toate produsele alese vor apărea complet în email-ul trimis la curentratis@gmail.com</p>
+
+    <div class="form-group">
+      <label for="nume">Nume și prenume *</label>
+      <input type="text" id="nume" required placeholder="Ion Popescu">
+    </div>
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input type="email" id="email" required placeholder="nume@email.com">
+    </div>
+    <div class="form-group">
+      <label for="telefon">Telefon *</label>
+      <input type="tel" id="telefon" required placeholder="07xx xxx xxx">
+    </div>
+
+    <button type="submit">Trimite cerere ofertă → curentratis@gmail.com</button>
+  </form>
+
+  <p class="note">
+    * Toate invertoarele, panourile și bateriile din link-urile tale sunt incluse<br>
+    * Panourile: 50% – 120% din puterea invertorului<br>
+    * Cablaj: preț variabil automat (500 / 1000 lei) în funcție de putere<br>
+    * Discount 3% aplicat automat
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ====================== DATE PRODUSE (neschimbate + noua baterie) ======================
+const invertorData = {
+  mono: { /* listă completă neschimbată */ 
+    ongrid: [{nume: "Invertor Livoltek GT1 3 kw monofazat", putere: 3, pret: 1669},{nume: "Invertor Livoltek GT1 5 kw monofazat", putere: 5, pret: 2590},{nume: "Invertor Livoltek GT1 6 kw monofazat", putere: 6, pret: 2790}],
+    hibrid: [{nume: "Invertor DEYE Hibrid 3.6kW monofazat", putere: 3.6, pret: 4500},{nume: "Invertor hibrid DEYE 5 kW monofazat", putere: 5, pret: 4549},{nume: "Invertor hibrid DEYE 6 kW monofazat", putere: 6, pret: 4590},{nume: "Invertor hibrid DEYE 8 kW monofazat", putere: 8, pret: 6390},{nume: "Invertor DEYE Hibrid 10kW monofazat", putere: 10, pret: 8590},{nume: "Invertor DEYE Hibrid 12kW monofazat", putere: 12, pret: 8990},{nume: "Invertor DEYE Hibrid 16kW monofazat", putere: 16, pret: 12000},{nume: "Invertor SOLIS Hibrid 6kW monofazat", putere: 6, pret: 4590},{nume: "Invertor Hibrid monofazat Invt XD 5KTL", putere: 5, pret: 6615},{nume: "Invertor Hibrid monofazat Invt XD 6KTL", putere: 6, pret: 7120}]
+  },
+  tri: {
+    ongrid: [{nume: "Invertor Livoltek GT3 Trifazat Ongrid 5kw", putere: 5, pret: 3390},{nume: "Invertor Livoltek GT3 Trifazat Ongrid 6kw", putere: 6, pret: 3490},{nume: "Invertor Livoltek GT3 Trifazat Ongrid 8kw", putere: 8, pret: 3590},{nume: "Invertor Livoltek GT3 Trifazat Ongrid 10kw", putere: 10, pret: 3790},{nume: "Invertor Livoltek GT3 Trifazat Ongrid 15kw", putere: 15, pret: 4000},{nume: "Invertor Livoltek GT3 Trifazat Ongrid 20kw", putere: 20, pret: 4590},{nume: "Invertor Livoltek GT3 Trifazat Ongrid 25kw", putere: 25, pret: 6090}],
+    hibrid: [{nume: "Invertor hibrid DEYE 6 kW trifazat", putere: 6, pret: 9500},{nume: "Invertor hibrid DEYE 8 kW trifazat", putere: 8, pret: 9190},{nume: "Invertor hibrid DEYE 10 kW trifazat", putere: 10, pret: 9500},{nume: "Invertor hibrid DEYE 12 kW trifazat", putere: 12, pret: 10500},{nume: "Invertor DEYE Hibrid 15kW 2xMPPT SUN-15K cu baterii LV", putere: 15, pret: 11990},{nume: "Invertor SOLIS Hibrid 12kW trifazat", putere: 12, pret: 11990},{nume: "Invertor SOLIS Hibrid 15kW trifazat", putere: 15, pret: 14290},{nume: "Invertor DEYE Hibrid 20kW 2xMPPT SUN-20K cu baterii LV", putere: 20, pret: 15290}]
+  }
+};
+
+const pretPanou = {440: 390.99, 480: 424.99};
+
+const pretBaterie = {
+  0:     0,
+  4.8:   4190,
+  5.12:  4590,  
+  10.24: 8390,
+  15:    9890,
+  20.48: 16780,
+  30:    19780
+};
+
+// ====================== UPDATE PANOURI (50%–120%) – neschimbat ======================
+function updateInvertorOptions() {
+  const faza = document.getElementById("faza").value;
+  const tip = document.getElementById("tipInvertor").value;
+  const select = document.getElementById("invertorSelect");
+  select.innerHTML = "";
+
+  const lista = invertorData[faza][tip] || [];
+  lista.forEach(inv => {
+    const opt = document.createElement("option");
+    opt.value = `${inv.putere}|${inv.pret}|${inv.nume}`;
+    opt.textContent = `${inv.nume} – ${inv.putere} kW (${inv.pret} lei)`;
+    select.appendChild(opt);
+  });
+
+  document.getElementById("sectiuneBaterii").classList.toggle("hidden", tip !== "hibrid");
+  updatePanouriLimite();
+  calculeazaTotal();
+}
+
+function updatePanouriLimite() {
+  const val = document.getElementById("invertorSelect").value;
+  if (!val) return;
+  const pw = parseFloat(val.split("|")[0]);
+
+  const minKw = pw * 0.5;
+  const maxKw = pw * 1.2;
+
+  const tipPan = document.getElementById("tipPanou").value;
+  const puterePanou = parseFloat(tipPan);
+
+  const minPan = Math.ceil((minKw * 1000) / puterePanou);
+  const maxPan = Math.floor((maxKw * 1000) / puterePanou);
+
+  const slider = document.getElementById("nrPanouri");
+  slider.min = minPan;
+  slider.max = Math.min(maxPan, 60);
+  if (slider.value < minPan) slider.value = minPan;
+  if (slider.value > slider.max) slider.value = slider.max;
+
+  document.getElementById("limitePanouri").innerHTML = 
+    `Permis: <strong>${minPan} – ${slider.max}</strong> panouri (${minKw.toFixed(1)} – ${maxKw.toFixed(1)} kWp = 50% – 120%)`;
+
+  document.getElementById("nrPanouriValue").textContent = slider.value;
+  updatePutereTotala();
+}
+
+function updatePutereTotala() {
+  const nr = parseInt(document.getElementById("nrPanouri").value) || 0;
+  const tipP = parseFloat(document.getElementById("tipPanou").value);
+  const putere = nr * tipP;
+  document.getElementById("putereTotalaValue").textContent = `${putere} Wp (${(putere/1000).toFixed(2)} kWp)`;
+}
+
+// ====================== CALCUL TOTAL – CU CABLAJ VARIABIL ======================
+function calculeazaTotal() {
+  let totalBrut = 0;
+
+  // Invertor
+  const invVal = document.getElementById("invertorSelect").value;
+  if (invVal) totalBrut += parseFloat(invVal.split("|")[1]) || 0;
+
+  // Panouri
+  const nrPan = parseInt(document.getElementById("nrPanouri").value) || 0;
+  const tipPan = document.getElementById("tipPanou").value;
+  totalBrut += nrPan * (pretPanou[tipPan] || 0);
+
+  // Putere totală kWp (pentru cablaj)
+  const kwp = (nrPan * parseFloat(tipPan)) / 1000;
+
+  // Structură
+  if (document.getElementById("structura").checked) {
+    const tipStr = document.getElementById("tipStructura").value;
+    totalBrut += nrPan * ({tabla:130, tigla:160, sol:250}[tipStr] || 0);
+  }
+
+  // Cablaj – PREȚ VARIABIL
+  if (document.getElementById("cablu").checked) {
+    totalBrut += (kwp < 10) ? 500 : 1000;
+  }
+
+  // Rest accesorii
+  if (document.getElementById("tablouri").checked) totalBrut += 800;
+  if (document.getElementById("impamantare").checked) totalBrut += 1500;
+
+  // Baterii (inclusiv noua 5.12 kWh)
+  if (document.getElementById("tipInvertor").value === "hibrid") {
+    const bat = document.getElementById("baterii").value;
+    totalBrut += pretBaterie[bat] || 0;
+  }
+
+  // Servicii
+  if (document.getElementById("dosar").checked) totalBrut += 700;
+  if (document.getElementById("montaj").checked) {
+    totalBrut += 1000 + Math.round(kwp * 600);
+  }
+
+  const totalFinal = Math.round(totalBrut * 0.97);
+
+  document.getElementById("totalPret").innerHTML = 
+    `Total cu discount 3%: <strong>${totalFinal.toLocaleString("ro-RO")} lei</strong><br>
+     <small>(preț brut: ${totalBrut.toLocaleString("ro-RO")} lei)</small>`;
+
+  updateChart(kwp);
+}
+
+let chartInstance = null;
+function updateChart(kwp) {
+  const ctx = document.getElementById("chart").getContext("2d");
+  const prodLunaraPerKwp = [90,110,140,160,180,190,195,180,150,120,90,80];
+  const labels = ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Noi","Dec"];
+  const data = prodLunaraPerKwp.map(v => Math.round(v * kwp));
+  const anual = data.reduce((a,b)=>a+b,0);
+
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: `Producție ${kwp.toFixed(2)} kWp – Anual ≈ ${anual} kWh`, data, backgroundColor: 'rgba(56,142,60,0.7)', borderColor: '#1b5e20', borderWidth: 2 }] },
+    options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
+  });
+}
+
+function trimiteOferta(e) {
+  e.preventDefault();
+  const nume = document.getElementById("nume").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const telefon = document.getElementById("telefon").value.trim();
+  if (!nume || !email || !telefon) { alert("Completează toate câmpurile!"); return; }
+
+  const invertorText = document.querySelector("#invertorSelect option:checked")?.textContent || "nespecificat";
+  const nrPanouri = document.getElementById("nrPanouriValue").textContent;
+  const tipPanouText = document.querySelector("#tipPanou option:checked")?.textContent || "";
+  const putereTotala = document.getElementById("putereTotalaValue").textContent;
+  const bateriiText = document.getElementById("baterii").options[document.getElementById("baterii").selectedIndex].text;
+  const totalText = document.getElementById("totalPret").textContent;
+
+  const structura = document.getElementById("structura").checked ? 
+    `Da – ${document.getElementById("tipStructura").options[document.getElementById("tipStructura").selectedIndex].text}` : "Nu";
+
+  const subiect = encodeURIComponent(`Ofertă completă fotovoltaic – ${nume}`);
+  let corp = `Bună ziua,\n\nConfigurația aleasă:\n\n`;
+  corp += `Invertor: ${invertorText}\n`;
+  corp += `Panouri: ${nrPanouri} bucăți × ${tipPanouText} → ${putereTotala}\n`;
+  corp += `Structură: ${structura}\n`;
+  corp += `Cablaj: Da (preț variabil în funcție de putere)\n`;
+  corp += `Tablouri protecții: ${document.getElementById("tablouri").checked ? "Da" : "Nu"}\n`;
+  corp += `Împământare: ${document.getElementById("impamantare").checked ? "Da" : "Nu"}\n`;
+  corp += `Baterii: ${bateriiText}\n`;
+  corp += `Montaj: ${document.getElementById("montaj").checked ? "Da" : "Nu"}\n`;
+  corp += `Dosar prosumator: ${document.getElementById("dosar").checked ? "Da" : "Nu"}\n\n`;
+  corp += `Total estimat (cu 3% discount): ${totalText}\n\n`;
+  corp += `Date client:\nNume: ${nume}\nEmail: ${email}\nTelefon: ${telefon}\n\nMulțumesc!`;
+
+  const mailtoLink = `mailto:curentratis@gmail.com?subject=${subiect}&body=${encodeURIComponent(corp)}`;
+  window.location.href = mailtoLink;
+  alert("Email-ul s-a deschis cu TOATE produsele (inclusiv noua baterie 5.12 kWh). Completează și trimite!");
+}
+
+// Inițializare
+document.getElementById("structura").onchange = function(){
+  document.getElementById("tipStructura").disabled = !this.checked;
+  calculeazaTotal();
+};
+
+window.onload = function() {
+  updateInvertorOptions();
+  updatePanouriLimite();
+  calculeazaTotal();
+};
+</script>
+
+</body>
+</html>
